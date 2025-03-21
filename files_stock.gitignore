@@ -1,0 +1,10 @@
+# Ignore compiled & cached files
+__pycache__/
+*.log
+*.db
+venv/
+
+# Ignore specific model files that are not needed
+stock_xgb_model.pkl
+xgboost_stock_model.pkl
+scaler_xgb.pkl
