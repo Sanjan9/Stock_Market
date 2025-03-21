@@ -7,6 +7,14 @@ import os
 app = Flask(__name__)
 
 # Load Model & Scalers
+
+
+model_path = os.path.join(os.path.dirname(__file__), "stock_model.pkl")
+feature_scaler_path = os.path.join(os.path.dirname(__file__), "feature_scaler.pkl")
+target_scaler_path = os.path.join(os.path.dirname(__file__), "target_scaler.pkl")
+
+
+
 model = joblib.load("stock_model.pkl")
 feature_scaler = joblib.load("feature_scaler.pkl")
 target_scaler = joblib.load("target_scaler.pkl")
