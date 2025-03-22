@@ -3,30 +3,36 @@ import joblib
 import numpy as np
 import yfinance as yf
 import os
+import urllib.request
 
 app = Flask(__name__)
 
-# Load Model & Scalers
+# ✅ GitHub Releases Direct Download Link for the Model
+model_url = "https://github.com/Sanjan9/Stock_Market/releases/download/v1.0/stock_model.pkl"
+model_path = "stock_model.pkl"
 
+# ✅ Automatically Download Model if It's Missing
+if not os.path.exists(model_path):
+    print("🔽 Downloading stock_model.pkl from GitHub Releases...")
+    try:
+        urllib.request.urlretrieve(model_url, model_path)
+        print("✅ Model downloaded successfully!")
+    except Exception as e:
+        print(f"❌ Error downloading model: {e}")
 
-model_path = os.path.join(os.path.dirname(__file__), "stock_model.pkl")
-feature_scaler_path = os.path.join(os.path.dirname(__file__), "feature_scaler.pkl")
-target_scaler_path = os.path.join(os.path.dirname(__file__), "target_scaler.pkl")
-
-
-
+# ✅ Load Model & Scalers (Your Original Code)
 model = joblib.load("stock_model.pkl")
 feature_scaler = joblib.load("feature_scaler.pkl")
 target_scaler = joblib.load("target_scaler.pkl")
 
 print("✅ Model and Scalers Loaded Successfully!")
 
-# Serve HTML Page
+# ✅ Serve HTML Page
 @app.route("/")
 def home():
     return send_file("index.html")
 
-# Stock Prediction API (POST)
+# ✅ Stock Prediction API (POST)
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
@@ -46,9 +52,9 @@ def predict():
         today_data = hist.iloc[-2]
         actual_price = hist.iloc[-1]["Close"]
 
-        # ✅ Fix: Use only 5 features
+        # ✅ Keep Your Original Feature Selection
         features_today = np.array([[today_data["Open"], today_data["High"], today_data["Low"], today_data["Close"], today_data["Volume"]]])
-        
+
         # Scale input data
         features_scaled = feature_scaler.transform(features_today)
 
@@ -83,9 +89,7 @@ def history(symbol):
     except Exception as e:
         return jsonify({"error": f"Internal error: {e}"}), 500
 
+# ✅ Correct Port Handling for Render Deployment
 if __name__ == "__main__":
-    import os
-
-    # Use Render's assigned PORT, default to 5003 for local testing
-    port = int(os.environ.get("PORT", 5003))  
+    port = int(os.environ.get("PORT", 10000))  # Render assigns a dynamic port
     app.run(host="0.0.0.0", port=port)
